@@ -149,7 +149,7 @@ class RapdPlugin(Process):
 
         # Start up processing
         Process.__init__(self, name="analysis")
-        self.start()
+        # self.start()
 
     def run(self):
         """Execution path of the plugin"""
@@ -286,6 +286,8 @@ calculation",
 
         self.tprint("  Running xtriage", level=30, color="white")
 
+        # command = "phenix.xtriage %s" % self.command["input_data"]["datafile"]
+
         command = "phenix.xtriage %s scaling.input.xray_data.obs_labels=\"I(+),\
 SIGI(+),I(-),SIGI(-)\"  scaling.input.parameters.reporting.loggraphs=True" % \
 self.command["input_data"]["datafile"]
@@ -406,8 +408,8 @@ installed",
         # Construct the pdbquery plugin command
         class PdbqueryArgs(object):
             """Object for command construction"""
-            clean = True
-            contaminants = True
+            clean = self.preferences["clean"]
+            contaminants = self.preferences.get("pdbquery_contaminants", False)
             datafile = self.command["input_data"]["datafile"]
             dir_up = self.preferences.get("dir_up", False)
             json = False
@@ -417,8 +419,8 @@ installed",
             progress = self.preferences.get("progress", False)
             # return_queue = multiprocessing.Queue()
             run_mode = None
-            search = True
-            test = True
+            search = self.preferences.get("pdbquery_search", False)
+            test = False
             verbose = True
 
         # Set the run mode dependent on this plugin's run mode
@@ -441,9 +443,10 @@ installed",
         self.tprint(arg="  Plugin id:      %s" % plugin.ID, level=10, color="white")
 
         # Run the plugin
-        pdbquery_result = plugin.RapdPlugin(pdbquery_command,
-                                            self.tprint,
-                                            self.logger)
+        my_plugin =  plugin.RapdPlugin(pdbquery_command,
+                                       self.tprint,
+                                       self.logger)
+        pdbquery_result = my_plugin.start()
 
         self.results["pdbquery"] = pdbquery_result
 

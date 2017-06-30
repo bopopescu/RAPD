@@ -411,42 +411,52 @@ class RapdPlugin(Process):
     def run_analysis_plugin(self):
         """Set up and run the analysis plugin"""
 
-        self.logger.debug("Setting up analysis plugin")
-        self.tprint("\nLaunching ANALYSIS plugin", level=30, color="blue")
+        if self.preferences.get("analysis_run", True):
 
-        # Construct the pdbquery plugin command
-        class AnalysisArgs(object):
-            """Object containing settings for plugin command construction"""
-            clean = True
-            datafile = self.results["results"]["files"]["mtzfile"]
-            dir_up = self.preferences["dir_up"]
-            json = self.preferences["json"]
-            nproc = self.preferences["nproc"]
-            pdbquery = False  #TODO
-            progress = self.preferences["progress"]
-            run_mode = "subprocess-interactive"
-            sample_type = "default"
-            show_plots = self.preferences["show_plots"]
-            test = False
+            self.logger.debug("Setting up analysis plugin")
+            self.tprint("\nLaunching ANALYSIS plugin", level=30, color="blue")
 
-        analysis_command = plugins.analysis.commandline.construct_command(AnalysisArgs)
+            # Construct the pdbquery plugin command
+            class AnalysisArgs(object):
+                """Object containing settings for plugin command construction"""
+                clean = True
+                datafile = self.results["results"]["files"]["mtzfile"]
+                dir_up = self.preferences["dir_up"]
+                json = self.preferences["json"]
+                nproc = self.preferences["nproc"]
+                pdbquery = self.preferences["analysis_contaminants"] or \
+                           self.preferences["analysis_search"]
+                pdbquery_contaminants = self.preferences["analysis_contaminants"]
+                pdbquery_search = self.preferences["analysis_search"]
+                progress = self.preferences["progress"]
+                run_mode = "subprocess-interactive"
+                sample_type = "default"
+                show_plots = self.preferences["show_plots"]
+                test = False
+                verbose = self.preferences["verbose"]
 
-        # The pdbquery plugin
-        plugin = plugins.analysis.plugin
+            analysis_command = plugins.analysis.commandline.construct_command(AnalysisArgs)
 
-        # Print out plugin info
-        self.tprint(arg="\nPlugin information", level=10, color="blue")
-        self.tprint(arg="  Plugin type:    %s" % plugin.PLUGIN_TYPE, level=10, color="white")
-        self.tprint(arg="  Plugin subtype: %s" % plugin.PLUGIN_SUBTYPE, level=10, color="white")
-        self.tprint(arg="  Plugin version: %s" % plugin.VERSION, level=10, color="white")
-        self.tprint(arg="  Plugin id:      %s" % plugin.ID, level=10, color="white")
+            # The pdbquery plugin
+            plugin = plugins.analysis.plugin
 
-        # Run the plugin
-        analysis_result = plugin.RapdPlugin(analysis_command,
-                                            self.tprint,
-                                            self.logger)
+            # Print out plugin info
+            self.tprint(arg="\nPlugin information", level=10, color="blue")
+            self.tprint(arg="  Plugin type:    %s" % plugin.PLUGIN_TYPE, level=10, color="white")
+            self.tprint(arg="  Plugin subtype: %s" % plugin.PLUGIN_SUBTYPE, level=10, color="white")
+            self.tprint(arg="  Plugin version: %s" % plugin.VERSION, level=10, color="white")
+            self.tprint(arg="  Plugin id:      %s" % plugin.ID, level=10, color="white")
 
-        self.results["analysis"] = analysis_result
+            # Run the plugin
+            plugin = plugin.RapdPlugin(analysis_command,
+                                       self.tprint,
+                                       self.logger)
+
+            self.results["analysis"] = plugin.run()
+
+        else:
+
+            self.results["analysis"] = None
 
     def postprocess(self):
         """After it's all done"""

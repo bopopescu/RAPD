@@ -182,7 +182,6 @@ class RapdPlugin(multiprocessing.Process):
         self.datafile = xutils.convert_unicode(self.command["input_data"].get("datafile"))
 
         multiprocessing.Process.__init__(self, name="pdbquery")
-        self.start()
 
     def run(self):
         """Execution path of the plugin"""

@@ -69,7 +69,9 @@ def construct_command(commandline_args):
         "clean": commandline_args.clean,
         "dir_up": commandline_args.dir_up,
         "nproc": commandline_args.nproc,
-        "pdbquery": commandline_args.pdbquery,
+        "pdbquery": commandline_args.pdbquery_contaminants or commandline_args.pdbquery_search,
+        "pdbquery_contaminants": commandline_args.pdbquery_contaminants,
+        "pdbquery_search": commandline_args.pdbquery_search,
         "json": commandline_args.json,
         "show_plots": commandline_args.show_plots,
         "progress": commandline_args.progress,
@@ -83,119 +85,135 @@ def construct_command(commandline_args):
 def get_commandline():
     """Grabs the commandline"""
 
-    # print "get_commandline"
-
     # Parse the commandline arguments
     commandline_description = "Launch analysis plugin"
-    my_parser = argparse.ArgumentParser(description=commandline_description)
+    parser = argparse.ArgumentParser(description=commandline_description)
 
-    # A True/False flag
-    my_parser.add_argument("-l", "--logging-off",
-                           action="store_false",
-                           dest="logging",
-                           help="Turn logging off")
-
-    # A True/False flag
-    my_parser.add_argument("-t", "--test",
-                           action="store_true",
-                           dest="test",
-                           help="Turn test mode on")
-
-    # Multiprocessing
-    my_parser.add_argument("--nproc",
-                           dest="nproc",
-                           type=int,
-                           default=max(1, multiprocessing.cpu_count() - 1),
-                           help="Number of processors to employ")
-
-    # Verbose
-    # my_parser.add_argument("-v", "--verbose",
-    #                        action="store_true",
-    #                        dest="verbose",
-    #                        help="More output")
-
-    # Quiet
-    my_parser.add_argument("-q", "--quiet",
-                           action="store_false",
-                           dest="verbose",
-                           help="Reduce output")
+    # Clean
+    parser.add_argument("--clean",
+                        action="store_true",
+                        dest="clean",
+                        help="Remove intermediate files")
 
     # Messy
-    # my_parser.add_argument("--messy",
+    # parser.add_argument("--messy",
     #                        action="store_false",
     #                        dest="clean",
     #                        help="Keep intermediate files")
 
-    # Clean
-    my_parser.add_argument("--clean",
-                           action="store_true",
-                           dest="clean",
-                           help="Remove intermediate files")
-
     # Color
-    # my_parser.add_argument("--color",
+    # parser.add_argument("--color",
     #                        action="store_false",
     #                        dest="no_color",
     #                        help="Color the terminal output")
 
     # No color
-    my_parser.add_argument("--nocolor",
-                           action="store_true",
-                           dest="no_color",
-                           help="Do not color the terminal output")
+    parser.add_argument("--nocolor",
+                        action="store_true",
+                        dest="no_color",
+                        help="Do not color the terminal output")
 
     # JSON Output
-    my_parser.add_argument("-j", "--json",
-                           action="store_true",
-                           dest="json",
-                           help="Output JSON format string")
+    parser.add_argument("-j", "--json",
+                        action="store_true",
+                        dest="json",
+                        help="Output JSON format string")
+
+    # A True/False flag
+    parser.add_argument("-l", "--logging-off",
+                        action="store_false",
+                        dest="logging",
+                        help="Turn logging off")
 
     # Hide plots?
-    my_parser.add_argument("--noplot",
-                           action="store_false",
-                           dest="show_plots",
-                           help="No plotting")
+    parser.add_argument("--noplot",
+                        action="store_false",
+                        dest="show_plots",
+                        help="No plotting")
+
+    # Show plots?
+    # parser.add_argument("--plot",
+    #                     action="store_true",
+    #                     dest="show_plots",
+    #                     help="Perform ascii plotting")
+
+    # Multiprocessing
+    parser.add_argument("--nproc",
+                        dest="nproc",
+                        type=int,
+                        default=max(1, multiprocessing.cpu_count() - 1),
+                        help="Number of processors to employ")
+
+    # Run contaminant screen
+    parser.add_argument("--pdbquery-contaminants",
+                        action="store_true",
+                        dest="pdbquery_contaminants",
+                        help="Run screen of known common contaminants - pass to pdbquery run")
+
+    # Run similarity search
+    parser.add_argument("--pdbquery-search",
+                        dest="pdbquery_search",
+                        action="store_true",
+                        help="Search for structures with similar unit cell - pass to pdbquery run")
 
     # Output progress updates?
-    my_parser.add_argument("--progress",
-                           action="store_true",
-                           dest="progress",
-                           help="Output progress updates to the terminal")
-
-    # Positional argument
-    my_parser.add_argument(action="store",
-                           dest="datafile",
-                           nargs="?",
-                           default=False,
-                           help="Name of file to be analyzed")
-
-    # Sample type
-    my_parser.add_argument("--sample_type",
-                           action="store",
-                           dest="sample_type",
-                           # nargs=1,
-                           default="default",
-                           choices=["default", "protein", "ribosome"],
-                           help="Type of sample")
-
-    # Verbose
-    my_parser.add_argument("--pdbquery",
-                           action="store_true",
-                           dest="pdbquery",
-                           help="Run pdbquery as part of analysis")
+    parser.add_argument("--progress",
+                        action="store_true",
+                        dest="progress",
+                        help="Output progress updates to the terminal")
 
     # Quiet
-    # my_parser.add_argument("--nopdbquery",
+    parser.add_argument("-q", "--quiet",
+                        action="store_false",
+                        dest="verbose",
+                        help="Reduce output")
+
+    # Verbose
+    # parser.add_argument("-v", "--verbose",
+    #                     action="store_true",
+    #                     dest="verbose",
+    #                     help="More output")
+
+    # Sample type
+    parser.add_argument("--sample_type",
+                        action="store",
+                        dest="sample_type",
+                        # nargs=1,
+                        default="default",
+                        choices=["default", "protein", "ribosome"],
+                        help="Type of sample")
+
+    # Positional argument
+    parser.add_argument(action="store",
+                        dest="datafile",
+                        nargs="?",
+                        default=False,
+                        help="Name of file to be analyzed")
+
+    # A True/False flag
+    parser.add_argument("-t", "--test",
+                        action="store_true",
+                        dest="test",
+                        help="Turn test mode on")
+
+    # # PDBQuery
+    # parser.add_argument("--pdbquery",
+    #                     action="store_true",
+    #                     dest="pdbquery",
+    #                     help="Run pdbquery as part of analysis")
+
+    # Quiet
+    # parser.add_argument("--nopdbquery",
     #                        action="store_false",
     #                        dest="pdbquery",
     #                        help="Don't run pdbquery as part of analysis")
 
     # Print help message if no arguments
     if len(sys.argv[1:]) == 0:
-        my_parser.print_help()
-        my_parser.exit()
+        parser.print_help()
+        parser.exit()
 
-    args = my_parser.parse_args()
+    args = parser.parse_args()
 
     # Insert logic to check or modify args here
     # Running in interactive mode if this code is being called
@@ -280,7 +298,8 @@ def main():
     tprint(arg="  Plugin version: %s" % plugin.VERSION, level=10, color="white")
     tprint(arg="  Plugin id:      %s" % plugin.ID, level=10, color="white")
 
-    plugin.RapdPlugin(command, tprint, logger)
+    my_plugin = plugin.RapdPlugin(command, tprint, logger)
+    my_plugin.start()
 
 if __name__ == "__main__":
 

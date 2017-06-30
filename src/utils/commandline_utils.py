@@ -51,11 +51,66 @@ import utils.spacegroup as spacegroup
 # The data processing parser - to be used by commandline RAPD processes
 dp_parser = argparse.ArgumentParser(add_help=False)
 
-# Verbosity
-dp_parser.add_argument("-v", "--verbose",
+# Beam center
+dp_parser.add_argument("-b", "--beamcenter",
+                       action="store",
+                       dest="beamcenter",
+                       default=[False, False],
+                       nargs=2,
+                       type=float,
+                       help="Define the beam center x,y")
+
+# No color in terminal printing
+dp_parser.add_argument("--clean",
                        action="store_true",
-                       dest="verbose",
-                       help="Enable verbose feedback in the terminal")
+                       dest="clean",
+                       help="Remove intermediate files")
+
+# No color in terminal printing
+dp_parser.add_argument("--color",
+                       action="store_false",
+                       dest="no_color",
+                       help="Use colors in CLI")
+
+# The detector
+dp_parser.add_argument("-d", "--detector",
+                       action="store",
+                       dest="detector",
+                       help="Define the detector (ex. adsc_q315)")
+
+# Resolution hi
+dp_parser.add_argument("--hires",
+                       action="store",
+                       dest="hires",
+                       default=0.0,
+                       type=float,
+                       help="High resolution limit")
+
+# Output JSON?
+dp_parser.add_argument("--json",
+                       action="store_true",
+                       dest="json",
+                       help="Output only final and full JSON")
+
+# List possible detectors
+dp_parser.add_argument("-ld", "--listdetectors",
+                       action="store_true",
+                       dest="listdetectors",
+                       help="List the available detectors")
+
+# List possible sites
+dp_parser.add_argument("-ls", "--listsites",
+                       action="store_true",
+                       dest="listsites",
+                       help="List the available sites")
+
+# Resolution low
+dp_parser.add_argument("--lowres",
+                       action="store",
+                       dest="lowres",
+                       default=0.0,
+                       type=float,
+                       help="Low resolution limit")
 
 # No log file
 dp_parser.add_argument("--nolog",
@@ -69,23 +124,14 @@ dp_parser.add_argument("--noplot",
                        dest="show_plots",
                        help="Do not display plots in CLI")
 
-# No color in terminal printing
-dp_parser.add_argument("--color",
-                       action="store_false",
-                       dest="no_color",
-                       help="Use colors in CLI")
-
-# Test mode?
-dp_parser.add_argument("-t", "--test",
-                       action="store_true",
-                       dest="test",
-                       help="Run in test mode")
-
-# Output JSON?
-dp_parser.add_argument("--json",
-                       action="store_true",
-                       dest="json",
-                       help="Output only final and full JSON")
+# Number of processors to use
+dp_parser.add_argument("--nproc",
+                       action="store",
+                       dest="nproc",
+                       type=int,
+                       default=multiprocessing.cpu_count(),
+                       help="Number of processors to use. Defaults to the number of \
+                             processors available")
 
 # Output progress updates?
 dp_parser.add_argument("--progress",
@@ -93,38 +139,27 @@ dp_parser.add_argument("--progress",
                        dest="progress",
                        help="Output progress updates to the terminal")
 
+# Sample type
+dp_parser.add_argument("--sample_type",
+                       action="store",
+                       dest="sample_type",
+                       default="protein",
+                       choices=["protein", "dna", "rna", "peptide"],
+                       help="The type of sample")
+
 # The site
 dp_parser.add_argument("-s", "--site",
                        action="store",
                        dest="site",
                        help="Define the site (ex. NECAT_C)")
 
-# List possible sites
-dp_parser.add_argument("-ls", "--listsites",
-                       action="store_true",
-                       dest="listsites",
-                       help="List the available sites")
-
-# The detector
-dp_parser.add_argument("-d", "--detector",
+# Solvent fraction
+dp_parser.add_argument("--solvent",
                        action="store",
-                       dest="detector",
-                       help="Define the detector (ex. adsc_q315)")
-
-# List possible detectors
-dp_parser.add_argument("-ld", "--listdetectors",
-                       action="store_true",
-                       dest="listdetectors",
-                       help="List the available detectors")
-
-# Beam center
-dp_parser.add_argument("-b", "--beamcenter",
-                       action="store",
-                       dest="beamcenter",
-                       default=[False, False],
-                       nargs=2,
+                       dest="solvent",
+                       default=0.55,
                        type=float,
-                       help="Define the beam center x,y")
+                       help="Solvent fraction 0.0-1.0")
 
 # Spacegroup
 dp_parser.add_argument("-sg", "--sg", "--spacegroup",
@@ -132,6 +167,12 @@ dp_parser.add_argument("-sg", "--sg", "--spacegroup",
                        dest="spacegroup",
                        default=False,
                        help="Input a spacegroup")
+
+# Test mode?
+dp_parser.add_argument("-t", "--test",
+                       action="store_true",
+                       dest="test",
+                       help="Run in test mode")
 
 # Unit cell
 dp_parser.add_argument("-u", "--unit", "--unitcell",
@@ -142,38 +183,6 @@ dp_parser.add_argument("-u", "--unit", "--unitcell",
                        type=float,
                        help="Input a unit cell a b c alpha beta gamma")
 
-# Sample type
-dp_parser.add_argument("--sample_type",
-                       action="store",
-                       dest="sample_type",
-                       default="protein",
-                       choices=["protein", "dna", "rna", "peptide"],
-                       help="The type of sample")
-
-# Solvent fraction
-dp_parser.add_argument("--solvent",
-                       action="store",
-                       dest="solvent",
-                       default=0.55,
-                       type=float,
-                       help="Solvent fraction 0.0-1.0")
-
-# Resolution low
-dp_parser.add_argument("--lowres",
-                       action="store",
-                       dest="lowres",
-                       default=0.0,
-                       type=float,
-                       help="Low resolution limit")
-
-# Resolution hi
-dp_parser.add_argument("--hires",
-                       action="store",
-                       dest="hires",
-                       default=0.0,
-                       type=float,
-                       help="High resolution limit")
-
 # Working directory
 dp_parser.add_argument("--work_dir",
                        action="store",
@@ -181,14 +190,11 @@ dp_parser.add_argument("--work_dir",
                        default=False,
                        help="Working directory")
 
-# Number of processors to use
-dp_parser.add_argument("--nproc",
-                       action="store",
-                       dest="nproc",
-                       type=int,
-                       default=multiprocessing.cpu_count(),
-                       help="Number of processors to use. Defaults to the number of \
-                             processors available")
+# Verbosity
+dp_parser.add_argument("-v", "--verbose",
+                       action="store_true",
+                       dest="verbose",
+                       help="Enable verbose feedback in the terminal")
 
 # The rapd file generating parser - to be used by commandline RAPD processes
 gf_parser = argparse.ArgumentParser(add_help=False)
@@ -411,7 +417,7 @@ def analyze_data_sources(sources,
                     #counter += 1
             else:
                 raise Exception("%s does not exist" % source_abspath)
-        
+
         return return_data
 
     elif mode == "integrate":

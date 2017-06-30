@@ -49,13 +49,33 @@ def get_commandline():
     parser = argparse.ArgumentParser(parents=[commandline_utils.dp_parser],
                                      description=commandline_description)
 
-    # Start frame
-    parser.add_argument("--start",
+    # Run contaminant screen
+    parser.add_argument("--analysis-contaminants",
+                        action="store_true",
+                        dest="analysis_contaminants",
+                        help="Run screen of known common contaminants - pass to analysis run")
+
+    # Do not run analysis
+    parser.add_argument("--no-analysis",
+                        dest="analysis_run",
+                        action="store_false",
+                        help="Do not run analysis")
+
+    # Run similarity search
+    parser.add_argument("--analysis-search",
+                        dest="analysis_search",
+                        action="store_true",
+                        help="Search for structures with similar unit cell - pass to analysis run")
+
+
+
+    # Who decides spacegroup
+    parser.add_argument("--decider",
                         action="store",
-                        dest="start_image",
-                        default=False,
-                        type=int,
-                        help="First image")
+                        dest="spacegroup_decider",
+                        default="auto",
+                        choices=["auto", "pointless", "xds"],
+                        help="Set which program decides on spacegroup")
 
     # End frame
     parser.add_argument("--end",
@@ -73,13 +93,13 @@ def get_commandline():
                         type=int,
                         help="Rounds of polishing to perform")
 
-    # Who decides spacegroup
-    parser.add_argument("--decider",
+    # Start frame
+    parser.add_argument("--start",
                         action="store",
-                        dest="spacegroup_decider",
-                        default="auto",
-                        choices=["auto", "pointless", "xds"],
-                        help="Rounds of polishing to perform")
+                        dest="start_image",
+                        default=False,
+                        type=int,
+                        help="First image")
 
     # Directory or files
     parser.add_argument(action="store",
@@ -193,22 +213,26 @@ def construct_command(image_0_data, run_data, commandline_args, detector_module)
         }
 
     command["preferences"] = {
+        "analysis_contaminants": commandline_args.analysis_contaminants,
+        "analysis_run": commandline_args.analysis_run,
+        "analysis_search": commandline_args.analysis_search,
         "dir_up": commandline_args.dir_up,
-        "start_frame": commandline_args.start_image,
         "end_frame": commandline_args.end_image,
         "flip_beam": detector_module.XDS_FLIP_BEAM,
-        "x_beam": commandline_args.beamcenter[0],
-        "y_beam": commandline_args.beamcenter[1],
-        "spacegroup": commandline_args.spacegroup,
-        "low_res": commandline_args.lowres,
         "hi_res": commandline_args.hires,
         "json": commandline_args.json,
+        "low_res": commandline_args.lowres,
         "nproc": commandline_args.nproc,
         "progress": commandline_args.progress,
+        "rounds_polishing": commandline_args.rounds_polishing,
         "show_plots": commandline_args.show_plots,
-        "xdsinp": detector_module.XDSINP,
+        "spacegroup": commandline_args.spacegroup,
         "spacegroup_decider": commandline_args.spacegroup_decider,
-        "rounds_polishing": commandline_args.rounds_polishing
+        "start_frame": commandline_args.start_image,
+        "verbose": commandline_args.verbose,
+        "x_beam": commandline_args.beamcenter[0],
+        "xdsinp": detector_module.XDSINP,
+        "y_beam": commandline_args.beamcenter[1],
     }
 
     if commandline_args.beamcenter[0]:

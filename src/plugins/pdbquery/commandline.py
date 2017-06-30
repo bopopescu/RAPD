@@ -293,7 +293,9 @@ def main():
     tprint(arg="  Plugin id:      %s" % plugin.ID, level=10, color="white")
 
     # Run the plugin
-    plugin.RapdPlugin(command, tprint, logger)
+    my_plugin = plugin.RapdPlugin(command, tprint, logger)
+    my_plugin.start()
+
 
 if __name__ == "__main__":
 
