@@ -60,6 +60,7 @@ def local_subprocess(command,
     proc = Popen(shlex.split(command),
                  stdout=PIPE,
                  stderr=PIPE,
+                 shell=True
                 )
 
     print ">>>1"
@@ -68,7 +69,6 @@ def local_subprocess(command,
     if pid_queue:
         pid_queue.put(proc.pid)
 
-    proc.wait()
     print ">>>2"
 
     # try:
