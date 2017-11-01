@@ -81,8 +81,9 @@ def local_subprocess(command,
     except KeyboardInterrupt:
         # sys.exit()
         os._exit()
-    print stdout
-    print stderr
+    if "best" in command:
+        print stdout
+        print stderr
     print ">>>3"
 
     # Put results on a Queue, if given

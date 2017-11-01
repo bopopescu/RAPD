@@ -868,7 +868,7 @@ class RapdPlugin(Process):
                         level=30,
                         color="red")
             return
-        command = "best -f %s" % best_detector
+        command = "/programs/i386-mac/best/3.2.0/best -f %s" % best_detector
 
         # Binning
         if str(self.image1.get('binning')) == '2x2':
