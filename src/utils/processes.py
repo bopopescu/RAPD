@@ -58,6 +58,7 @@ def local_subprocess(command,
         print "  result_queue", result_queue
         print "  tag", tag
         print "  shell", shell
+        print "  cwd", os.getcwd()
 
     proc = Popen(shlex.split(command),
                  stdout=PIPE,
