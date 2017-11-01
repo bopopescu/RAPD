@@ -49,12 +49,13 @@ def local_subprocess(command,
         tag - an identifying tag to be useful to the caller
     """
 
-    print "local_subprocess"
-    print "  command", command
-    print "  logfile", logfile
-    print "  pid_queue", pid_queue
-    print "  result_queue", result_queue
-    print "  tag", tag
+    if command.startswith("best"):
+        print "local_subprocess"
+        print "  command", command
+        print "  logfile", logfile
+        print "  pid_queue", pid_queue
+        print "  result_queue", result_queue
+        print "  tag", tag
 
     proc = Popen(shlex.split(command),
                  stdout=PIPE,
@@ -71,6 +72,9 @@ def local_subprocess(command,
     except KeyboardInterrupt:
         #sys.exit()
         os._exit()
+
+    if command.startswith("best"):
+        print stdout
 
     # Put results on a Queue, if given
     if result_queue:
