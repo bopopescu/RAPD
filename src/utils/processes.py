@@ -26,10 +26,12 @@ __status__ = "Development"
 
 # Standard imports
 from pprint import pprint
-import sys, os, signal
+import os
 import shlex
+import signal
+import sys
 #import time
-from subprocess import Popen, PIPE, STDOUT
+from subprocess import Popen, PIPE
 from multiprocessing import Pool
 
 def local_subprocess(command,
@@ -73,12 +75,12 @@ def local_subprocess(command,
 
     print ">>>2"
 
-    # try:
+    try:
     # Get the stdout and stderr from process
-    stdout, stderr = proc.communicate()
-    # except KeyboardInterrupt:
-    #     #sys.exit()
-    #     os._exit()
+        stdout, stderr = proc.communicate()
+    except KeyboardInterrupt:
+        # sys.exit()
+        os._exit()
     print stdout
     print stderr
     print ">>>3"

@@ -1110,6 +1110,8 @@ class RapdPlugin(Process):
         iteration -- (default False)
         """
 
+        print "process_strategy", iteration
+
         if iteration:
             st = iteration
             end = iteration+1
@@ -1145,7 +1147,7 @@ class RapdPlugin(Process):
             else:
                 # Reduces resolution and reruns Mosflm to calc new files, then runs Best.
                 job = Process(target=self.check_best, name="best%s" % i, args=(i, best_version))
-            job.start()
+            #job.start()
             self.jobs[str(i)] = job
 
     def process_xoalign(self):
