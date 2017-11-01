@@ -66,12 +66,12 @@ def local_subprocess(command,
     if pid_queue:
         pid_queue.put(proc.pid)
 
-    try:
-        # Get the stdout and stderr from process
-        stdout, stderr = proc.communicate()
-    except KeyboardInterrupt:
-        #sys.exit()
-        os._exit()
+    # try:
+    # Get the stdout and stderr from process
+    stdout, stderr = proc.communicate()
+    # except KeyboardInterrupt:
+    #     #sys.exit()
+    #     os._exit()
 
     if command.startswith("best"):
         print stdout
