@@ -947,7 +947,8 @@ class RapdPlugin(Process):
             d.update({'log'+l[i][1]:log})
             if self.test == False:
                 inp_kwargs = {'command': l[i][0],
-                              'logfile': log}
+                              'logfile': log,
+                              'redirect': True}
                 # Update batch queue info if using a compute cluster
                 inp_kwargs.update(self.batch_queue)
 
