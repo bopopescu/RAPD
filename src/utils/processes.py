@@ -61,7 +61,6 @@ def local_subprocess(command,
     try:
         # Get the stdout and stderr from process
         stdout, stderr = proc.communicate()
-        print stdout
     except KeyboardInterrupt:
         #sys.exit()
         os._exit()
