@@ -62,9 +62,14 @@ def local_subprocess(command,
                  stderr=PIPE,
                 )
 
+    print ">>>1"
+
     # Send back PID if have pid_queue
     if pid_queue:
         pid_queue.put(proc.pid)
+
+    proc.wait()
+    print ">>>2"
 
     # try:
     # Get the stdout and stderr from process
@@ -72,6 +77,8 @@ def local_subprocess(command,
     # except KeyboardInterrupt:
     #     #sys.exit()
     #     os._exit()
+
+    print ">>>3"
 
     if command.startswith("best"):
         print stdout
