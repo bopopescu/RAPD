@@ -61,8 +61,7 @@ def local_subprocess(command,
 
     proc = Popen(shlex.split(command),
                  stdout=PIPE,
-                 stderr=PIPE,
-                 shell=shell
+                 stderr=PIPE
                 )
 
     print ">>>1"
@@ -79,11 +78,8 @@ def local_subprocess(command,
     # except KeyboardInterrupt:
     #     #sys.exit()
     #     os._exit()
-
+    print stdout
     print ">>>3"
-
-    if command.startswith("best"):
-        print stdout
 
     # Put results on a Queue, if given
     if result_queue:
@@ -98,9 +94,12 @@ def local_subprocess(command,
 
     # Write out a log file, if name passed in
     if logfile:
+        print ">>>4"
         with open(logfile, "w") as out_file:
             out_file.write(stdout)
             out_file.write(stderr)
+            out_file.close()
+            print ">>>5"
 
 def mp_pool_FUTURE(nproc=8):
     """Setup and return a multiprocessing.Pool to launch jobs"""
