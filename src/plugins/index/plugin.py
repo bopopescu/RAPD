@@ -1138,7 +1138,7 @@ class RapdPlugin(Process):
         for i in range(st, end):
             print "i>>", i
             # Print for 1st BEST run
-            if i == 1:
+            if i == 0:
                 self.tprint(arg="  Starting BEST runs", level=98, color="white")
             # Run Mosflm for strategy
             if i == 4:
