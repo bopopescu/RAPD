@@ -1136,6 +1136,7 @@ class RapdPlugin(Process):
                 end = st+1
 
         for i in range(st, end):
+            print "i>>", i
             # Print for 1st BEST run
             if i == 1:
                 self.tprint(arg="  Starting BEST runs", level=98, color="white")
