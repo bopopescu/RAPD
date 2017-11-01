@@ -401,7 +401,7 @@ def get_commandline():
                         action="store",
                         dest="plugins",
                         nargs="+",
-                        default=["integrate"],
+                        default=["all"],
                         help="Plugin(s) to test:\n-----------------\n" \
                              + plugins)
 

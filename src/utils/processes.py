@@ -52,16 +52,16 @@ def local_subprocess(command,
     proc = Popen(shlex.split(command),
                  stdout=PIPE,
                  stderr=PIPE,
-                 #stderr=STDOUT,
-                 )
+                )
 
     # Send back PID if have pid_queue
     if pid_queue:
         pid_queue.put(proc.pid)
-    
+
     try:
         # Get the stdout and stderr from process
         stdout, stderr = proc.communicate()
+        print stdout
     except KeyboardInterrupt:
         #sys.exit()
         os._exit()
@@ -87,5 +87,3 @@ def mp_pool_FUTURE(nproc=8):
     """Setup and return a multiprocessing.Pool to launch jobs"""
     pool = Pool(processes=nproc)
     return pool
-
-
