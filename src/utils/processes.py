@@ -49,6 +49,13 @@ def local_subprocess(command,
         tag - an identifying tag to be useful to the caller
     """
 
+    print "local_subprocess"
+    print "  command", command
+    print "  logfile", logfile
+    print "  pid_queue", pid_queue
+    print "  result_queue", result_queue
+    print "  tag", tag
+
     proc = Popen(shlex.split(command),
                  stdout=PIPE,
                  stderr=PIPE,
