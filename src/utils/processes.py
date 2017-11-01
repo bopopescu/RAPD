@@ -36,7 +36,8 @@ def local_subprocess(command,
                      logfile=False,
                      pid_queue=False,
                      result_queue=False,
-                     tag=False):
+                     tag=False,
+                     shell=False):
     """
     Run job as subprocess on local machine. based on xutils.processLocal
 
@@ -56,11 +57,12 @@ def local_subprocess(command,
         print "  pid_queue", pid_queue
         print "  result_queue", result_queue
         print "  tag", tag
+        print "  shell", shell
 
     proc = Popen(shlex.split(command),
                  stdout=PIPE,
                  stderr=PIPE,
-                 #shell=True
+                 shell=shell
                 )
 
     print ">>>1"
