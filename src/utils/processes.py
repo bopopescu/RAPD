@@ -61,7 +61,8 @@ def local_subprocess(command,
 
     proc = Popen(shlex.split(command),
                  stdout=PIPE,
-                 stderr=PIPE
+                 stderr=PIPE,
+                 shell=shell
                 )
 
     print ">>>1"
@@ -79,6 +80,7 @@ def local_subprocess(command,
     #     #sys.exit()
     #     os._exit()
     print stdout
+    print stderr
     print ">>>3"
 
     # Put results on a Queue, if given
@@ -95,6 +97,7 @@ def local_subprocess(command,
     # Write out a log file, if name passed in
     if logfile:
         print ">>>4"
+        print "Opening %s" % logfile
         with open(logfile, "w") as out_file:
             out_file.write(stdout)
             out_file.write(stderr)
