@@ -1109,8 +1109,6 @@ class RapdPlugin(Process):
         iteration -- (default False)
         """
 
-        self.logger.debug("process_strategy", iteration)
-
         if iteration:
             st = iteration
             end = iteration+1
