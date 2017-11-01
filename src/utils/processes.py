@@ -60,7 +60,7 @@ def local_subprocess(command,
     proc = Popen(shlex.split(command),
                  stdout=PIPE,
                  stderr=PIPE,
-                 shell=True
+                 #shell=True
                 )
 
     print ">>>1"
