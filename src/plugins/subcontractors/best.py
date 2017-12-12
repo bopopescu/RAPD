@@ -28,6 +28,7 @@ __status__ = "Development"
 # import argparse
 # import from collections import OrderedDict
 # import datetime
+from distutils.spawn import find_executable
 # import glob
 # import json
 # import logging
@@ -211,3 +212,38 @@ def parse_best_plots(inp):
 
     # pprint(output)
     return output
+
+
+def check_best_detector(detector):
+    """Check that the detector we need is in the BEST configuration file"""
+
+    best_executable = find_executable("best")
+    detector_info = os.path.join(os.path.dirname(best_executable),
+                                 "detector-inf.dat")
+
+    # Read the detector info file to see if the detector is in it
+    lines = open(detector_info, "r").readlines()
+    found = False
+    for line in lines:
+        if line.startswith(detector+" "):
+            found = True
+            break
+        elif line.startswith("end"):
+            break
+
+    if not found:
+        self.tprint(arg="!!!",
+                    level=30,
+                    color="red")
+        self.tprint(arg="!!! Detector %s missing from the BEST detector information file !!!" %
+                    detector,
+                    level=30,
+                    color="red")
+        self.tprint(arg="Add \"%s\" \n to file %s to get BEST running" %
+                    (info.BEST_INFO[detector], detector_info),
+                    level=30,
+                    color="red")
+        self.tprint(arg="!!!",
+                    level=30,
+                    color="red")
+    return found
