@@ -100,6 +100,9 @@ def construct_command(image_headers, commandline_args, detector_module):
     # Plugin settings
     command["preferences"] = {}
 
+    # Housekeeping
+    command["preferences"]["clean_up"] = commandline_args.clean_up
+
     # JSON output?
     command["preferences"]["json"] = commandline_args.json
     command["preferences"]["progress"] = commandline_args.progress
@@ -282,6 +285,13 @@ def get_commandline():
                         default=0.2,
                         type=float,
                         help="Minimum detector time in seconds")
+
+    # Don't clean up
+    parser.add_argument("--dirty",
+                        action="store_false",
+                        dest="clean_up",
+                        default=True,
+                        help="Do not clean up")
 
     # Directory or files
     parser.add_argument(action="store",

@@ -349,6 +349,8 @@ class RapdPlugin(Process):
         #self.flux = str(self.image1.get("flux", '3E10'))
         self.solvent_content = self.preferences.get("solvent_content", 0.55)
 
+        self.clean = self.preferences.get("clean_up", False)
+
         Process.__init__(self, name="AutoindexingStrategy")
         # self.start() is called by the initiator of this script
 
