@@ -16,9 +16,11 @@ RUN yum -y install bzip2 \
                    openssl-devel \
                    patch \
                    subversion \
+                   tar \
                    wget
 RUN adduser tester
-USER tester
+# USER tester
+# yum install http://opensource.wandisco.com/centos/6/git/x86_64/wandisco-git-release-6-1.noarch.rpm
 WORKDIR /home/tester
 # RUN git clone -b master https://github.com/RAPD/RAPD.git rapd
 # WORKDIR /home/tester/rapd/install
