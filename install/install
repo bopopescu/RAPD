@@ -128,7 +128,7 @@ if [[ $PLATFORM == "Linux" ]]; then
   if [ -f /etc/centos-release ]; then
 
     LINUX_FLAVOR="CentOS"
-    CENTOS_VERSION_MAJOR=`cat /etc/centos-release | cut -d" " -f4 | cut -d "." -f1`
+    CENTOS_VERSION_MAJOR=`head -n 1 /etc/issue | cut -d" " -f3 | cut -d "." -f1`
 
     if [ $CENTOS_VERSION_MAJOR == "6" ]; then
       MODULES_LIST="wget subversion git make bzip2 openssl-devel gcc-c++ mesa-libGL-devel mesa-libGLU-devel patch"
